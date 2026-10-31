@@ -6,142 +6,73 @@
 <title>RL 2D - Rocket League</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:linear-gradient(to bottom,#1e293b,#0f172a);color:#fff;min-height:100vh}
-.tela{display:none;padding:20px;min-height:100vh}
-.tela.ativa{display:block}
-.tela-login{display:flex;align-items:center;justify-content:center}
-.caixa{background:#1e293b;padding:25px;border-radius:12px;border:1px solid #334155;max-width:450px;margin:0 auto;text-align:center}
-h1{font-size:28px;margin-bottom:10px;color:#f97316}
-p{color:#94a3b8;margin-bottom:25px}
+body{background:linear-gradient(135deg,#1e3a8a,#166534);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.caixa-login{background:#1e293b;padding:40px 30px;border-radius:12px;border:2px solid #475569;text-align:center;max-width:400px;width:90%}
+h1{font-size:28px;margin-bottom:8px;color:#f97316}
+p{color:#94a3b8;margin-bottom:30px}
 input{width:100%;padding:14px;font-size:16px;border:2px solid #475569;border-radius:8px;background:#0f172a;color:#fff;margin-bottom:15px}
 input:focus{outline:none;border-color:#f97316}
-button{padding:12px 24px;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;transition:.2s}
+button{width:100%;padding:14px;font-size:16px;font-weight:bold;border:none;border-radius:8px;cursor:pointer;transition:.2s}
 button:hover{transform:scale(1.02)}
-.btn-larj{background:#f97316;color:#fff;width:100%}
-.barra-topo{background:#1e293b;padding:12px 20px;display:flex;justify-content:space-between;border-radius:8px;margin-bottom:20px;border:1px solid #334155}
-.abas{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
-.aba{padding:8px 14px;background:transparent;border:none;color:#94a3b8;font-size:14px;border-radius:6px;cursor:pointer}
-.aba.ativa{background:#334155;color:#fff}
-.caixa-conteudo{background:#1e293b;padding:25px;border-radius:12px;border:1px solid #334155;margin-bottom:20px}
-h2{font-size:20px;margin-bottom:20px}
-.grid-modos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0}
-.btn-verde{background:#22c55e;color:#fff}
-.btn-azul{background:#0ea5e9;color:#fff}
-.btn-cinza{background:#475569;color:#fff}
-.modo-selecionado{border:2px solid #facc15 !important}
-.oculto{display:none !important}
-.mensagem{padding:12px;border-radius:6px;margin:10px 0}
-.sucesso{background:rgba(34,197,94,.1);color:#86efac;border:1px solid #22c55e}
-.erro{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid #ef4444}
+.btn-entrar{background:#f97316;color:#fff}
+.btn-entrar:hover{background:#ea580c}
+.erro{color:#fca5a5;margin-bottom:10px;min-height:22px}
+.tela-principal{display:none;padding:30px;text-align:center;width:100vw;height:100vh;background:linear-gradient(135deg,#1e3a8a,#166534)}
+.tela-principal.ativa{display:block}
 </style>
 </head>
 <body>
 
 <!-- TELA DE LOGIN -->
-<div id="tela-login" class="tela tela-login ativa">
-<div class="caixa">
+<div id="tela-login" class="caixa-login">
 <h1>🚀 ROCKET LEAGUE 2D</h1>
 <p>Clone 2D · Visão Lateral</p>
-<input type="text" id="campo-nome" placeholder="Seu nome de jogador...">
-<div id="msg-login" class="mensagem oculto"></div>
-<button class="btn-larj" id="botao-entrar">ENTRAR</button>
-</div>
-</div>
-
-<!-- TELA PRINCIPAL -->
-<div id="tela-principal" class="tela">
-<div class="barra-topo">
-<div>
-<strong id="nome-jogador">Jogador</strong><br>
-<small style="color:#94a3b8">Bronze III • 150 MMR</small>
-</div>
-<div style="text-align:right">
-💎 0 Créditos<br>
-<small style="color:#94a3b8">Nível 1</small>
-</div>
+<input type="text" id="meu-nome" placeholder="Digite seu nome...">
+<div id="mensagem-erro" class="erro"></div>
+<button id="botao-entrar" class="btn-entrar">ENTRAR</button>
 </div>
 
-<div class="abas">
-<button class="aba ativa" onclick="mostrarAba('jogar')">🎮 Jogar</button>
-<button class="aba" onclick="mostrarAba('resgatar')">🎁 Código</button>
-<button class="aba" onclick="mostrarAba('amigos')">👥 Amigos</button>
-<button class="aba" onclick="sair()">🚪 Sair</button>
-</div>
-
-<div id="aba-jogar">
-<div class="caixa-conteudo">
-<h2>🎮 Escolha o modo</h2>
-<div class="grid-modos">
-<button class="btn-verde modo-selecionado" onclick="alert('Partida 1v1 iniciada! Boa sorte! ⚽')">⚡ 1v1</button>
-<button class="btn-cinza" onclick="alert('Partida 2v2 com bots! 👥')">👥 2v2</button>
-<button class="btn-cinza" onclick="alert('Partida 3v3 com bots! 🏆')">🏆 3v3</button>
-<button class="btn-cinza" onclick="alert('Partida 4v4 com bots! 🔥')">🔥 4v4</button>
-</div>
-</div>
-</div>
-
-<div id="aba-resgatar" class="oculto">
-<div class="caixa-conteudo">
-<h2>🎁 Resgatar Código</h2>
-<input type="text" id="codigo" placeholder="Digite o código...">
-<button class="btn-azul" onclick="resgatar()">RESGATAR</button>
-<div id="msg-codigo" class="mensagem oculto"></div>
-</div>
-</div>
-
-<div id="aba-amigos" class="oculto">
-<div class="caixa-conteudo">
-<h2>👥 Amigos</h2>
-<input type="text" placeholder="Nome do jogador...">
-<button class="btn-azul" onclick="alert('Pedido enviado! ✅')">Enviar Pedido</button>
-<p style="margin-top:15px">Nenhum amigo adicionado ainda.</p>
-</div>
-</div>
-
+<!-- TELA DEPOIS DE ENTRAR -->
+<div id="tela-interna" class="tela-principal">
+<h2>Bem-vindo, <span id="mostra-nome"></span>! 🎉</h2>
+<p style="margin-top:20px;color:#fff">Você entrou com sucesso!</p>
+<button style="max-width:200px;margin-top:30px;background:#ef4444" onclick="sair()">SAIR</button>
 </div>
 
 <script>
-document.getElementById('botao-entrar').addEventListener('click',function(){
-const nome=document.getElementById('campo-nome').value.trim()
-if(!nome){
-document.getElementById('msg-login').textContent='Digite seu nome!'
-document.getElementById('msg-login').className='mensagem erro'
-return
-}
-document.getElementById('nome-jogador').textContent=nome
-document.getElementById('tela-login').classList.remove('ativa')
-document.getElementById('tela-principal').classList.add('ativa')
-})
+// PEGA OS ELEMENTOS
+const botaoEntrar = document.getElementById('botao-entrar');
+const campoNome = document.getElementById('meu-nome');
+const mensagemErro = document.getElementById('mensagem-erro');
+const telaLogin = document.getElementById('tela-login');
+const telaInterna = document.getElementById('tela-interna');
+const mostraNome = document.getElementById('mostra-nome');
 
-function mostrarAba(nome){
-document.querySelectorAll('.aba').forEach(a=>a.classList.remove('ativa'))
-event.target.classList.add('ativa')
-document.getElementById('aba-jogar').classList.add('oculto')
-document.getElementById('aba-resgatar').classList.add('oculto')
-document.getElementById('aba-amigos').classList.add('oculto')
-document.getElementById('aba-'+nome).classList.remove('oculto')
-}
+// FUNÇÃO DE ENTRAR
+botaoEntrar.addEventListener('click', function() {
+    const nome = campoNome.value.trim();
+    
+    if (nome === '') {
+        mensagemErro.textContent = '⚠️ Por favor, digite seu nome!';
+        return;
+    }
+    
+    // ENTRA!
+    mostraNome.textContent = nome;
+    telaLogin.style.display = 'none';
+    telaInterna.classList.add('ativa');
+});
 
-function resgatar(){
-const cod=document.getElementById('codigo').value.toUpperCase()
-const codigosValidos=['AMIGO123','DEV2026','ROCKET']
-const msg=document.getElementById('msg-codigo')
-if(codigosValidos.includes(cod)){
-msg.textContent='✅ Código válido! Tag recebida: "AMIGO"'
-msg.className='mensagem sucesso'
-}else{
-msg.textContent='❌ Código inválido!'
-msg.className='mensagem erro'
-}
-msg.classList.remove('oculto')
-}
+// TAMBÉM FUNCIONA APERTANDO ENTER
+campoNome.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') botaoEntrar.click();
+});
 
-function sair(){
-if(confirm('Sair do jogo?')){
-document.getElementById('tela-principal').classList.remove('ativa')
-document.getElementById('tela-login').classList.add('ativa')
-document.getElementById('campo-nome').value=''
-}
+function sair() {
+    telaInterna.classList.remove('ativa');
+    telaLogin.style.display = 'block';
+    campoNome.value = '';
+    mensagemErro.textContent = '';
 }
 </script>
 
