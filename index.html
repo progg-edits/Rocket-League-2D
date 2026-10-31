@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL 2D — Rocket League</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body {
+            background: linear-gradient(to bottom, #1e40af, #166534, #22c55e);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .tela { display: none; padding: 20px; min-height: 100vh; }
+        .tela.ativa { display: block; }
+        
+        .caixa {
+            background: rgba(30, 41, 59, 0.9);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #475569;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        h1, h2 { text-align: center; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #cbd5e1; }
+        input {
+            width: 100%; padding: 12px; border: 2px solid #475569;
+            border-radius: 8px; background: #0f172a;
+            color: white; font-size: 15px; margin-bottom: 12px;
+        }
+        input:focus { outline: none; border-color: #f97316; }
+        
+        button {
+            padding: 12px 24px; border: none; border-radius: 8px;
+            font-size: 15px; font-weight: bold; cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover { transform: scale(1.03); }
+        
+        .btn-larj { background: #f97316; color: white; width: 100%; margin-top: 8px; }
+        .btn-azul { background: #0ea5e9; color: white; width: 100%; }
+        .btn-verde { background: #22c55e; color: white; width: 100%; }
+        .btn-vermelho { background: #ef4444; color: white; }
+        .btn-cinza { background: #475569; color: white; width: 100%; }
+        .btn-ok { background: #6366f1; color: white; }
+        
+        .linha-botoes { display: flex; gap: 10px; margin-top: 15px; }
+        .linha-botoes button { flex: 1; }
+        
+        .voltar { 
+            background: none; border: none; color: white; 
+            font-size: 16px; cursor: pointer; padding: 0; margin-bottom: 15px;
+        }
+        .voltar:hover { color: #f97316; }
+        
+        .tag-recebida {
+            background: linear-gradient(90deg, #0ea5e9, #7dd3fc);
+            color: #0c4a6e;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            display: inline-block;
+            margin: 15px 0;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.6);
+        }
+        
+        .item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .item-nome { font-weight: bold; font-size: 15px; }
+        .item-status { font-size: 12px; margin-top: 4px; }
+        .status-online { color: #4ade80; }
+        .status-offline { color: #9ca3af; }
+        .status-jogando { color: #facc15; }
+        
+        .fundo-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: none;
+            align-items: center; justify-content: center; z-index: 9999;
+        }
+        .fundo-modal.ativo { display: flex; }
+        .modal {
+            background: #1e293b; border: 2px solid #475569; border-radius: 12px;
+            padding: 25px; max-width: 400px; width: 90%; text-align: center;
+        }
+        
+        .chave-pix {
+            font-family: monospace; background: #0f172a;
+            padding: 12px; border-radius: 6px;
+            word-break: break-all; font-size: 12px;
+            margin: 10px 0;
+        }
+        .aviso-pix {
+            font-size: 13px; color: #fde047;
+            background: rgba(234,179,8,0.1);
+            padding: 10px; border-radius: 6px; margin: 10px 0;
+        }
+        
+        .oculto { display: none !important; }
+        .mensagem { padding: 12px; border-radius: 6px; margin: 10px 0; text-align: center; }
+        .sucesso { background: rgba(34,197,94,0.2); color: #86efac; }
+        .erro { background: rgba(239,68,68,0.2); color: #fca5a5; }
+    </style>
+</head>
+<body>
+
+<!-- TELA LOGIN -->
+<div id="tela-login" class="tela ativa">
+    <div class="caixa">
+        <h1>🚀 RL 2D</h1>
+        <p style="text-align:center; color:#9ca3af; margin-bottom:20px;">Rocket League 2D</p>
+        <label>Digite seu nome de jogador:</label>
+        <input type="text" id="campo-nome" placeholder="Seu nome aqui...">
+        <div id="msg-login" class="mensagem oculto"></div>
+        <button class="btn-larj" onclick="fazerLogin()">ENTRAR</button>
+    </div>
+</div>
+
+<!-- TELA PRINCIPAL -->
+<div id="tela-principal" class="tela">
+    <div class="caixa" style="text-align:center;">
+        <h2 id="exibe-nome">Jogador</h2>
+        <p id="exibe-tag-equipada" class="tag-recebida oculto" style="font-size:13px; padding:4px 12px;"></p>
+        <p style="color:#9ca3af; font-size:14px;">Bronze III • 150 MMR</p>
+        <p style="color:#facc15; font-size:16px; margin-top:5px;">💎 <span id="exibe-creditos">100</span> Créditos</p>
+    </div>
+    <div style="display:grid; gap:10px; max-width:500px; margin:20px auto; padding:0 20px;">
+        <button class="btn-larj" onclick="ir('tela-jogar')">🎮 Jogar</button>
+        <button class="btn-azul" onclick="ir('tela-resgatar')">🎁 Resgatar Código</button>
+        <button class="btn-verde" onclick="ir('tela-amigos')">👥 Amigos</button>
+        <button class="btn-azul" onclick="ir('tela-loja')">🛒 Loja / Comprar Créditos</button>
+        <button class="btn-cinza" onclick="sair()">🚪 Sair</button>
+    </div>
+</div>
+
+<!-- RESGATAR CÓDIGO -->
+<div id="tela-resgatar" class="tela">
+    <div class="caixa">
+        <button class="voltar" onclick="ir('tela-principal')">← Voltar</button>
+        <h2>🎁 Resgatar Código</h2>
+        <label>Digite seu código:</label>
+        <input type="text" id="codigo-input" placeholder="Digite o código...">
+        <button class="btn-larj" onclick="resgatarCodigo()">RESGATAR</button>
+        <div id="msg-codigo" class="mensagem oculto"></div>
+    </div>
+</div>
+
+<!-- MODAL TAG -->
+<div id="modal-tag" class="fundo-modal">
+    <div class="modal">
+        <h3>🎉 Você recebeu essa tag!</h3>
+        <div id="nome-tag" class="tag-recebida">Nome da Tag</div>
+        <p style="color:#9ca3af; font-size:14px;">Deseja equipar esta tag agora?</p>
+        <div class="linha-botoes">
+            <button class="btn-azul" onclick="equiparTag()">✅ Equipar</button>
+            <button class="btn-ok" onclick="fecharModalTag()">👌 OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- AMIGOS -->
+<div id="tela-amigos" class="tela">
+    <div class="caixa">
+        <button class="voltar" onclick="ir('tela-principal')">← Voltar</button>
+        <h2>👥 Amigos</h2>
+        
+        <label>Escreva o nome da pessoa:</label>
+        <div style="display:flex; gap:8px;">
+            <input type="text" id="buscar-nome" placeholder="Nome do jogador..." style="flex:1; margin:0;">
+            <button class="btn-azul" onclick="buscarAmigo()">Enviar</button>
+        </div>
+        
+        <h3 style="margin:25px 0 10px; font-size:16px;">📩 Pedidos de amizade</h3>
+        <div id="lista-pedidos">
+            <p style="color:#9ca3af; font-size:14px;">Nenhum pedido pendente</p>
+        </div>
+        
+        <h3 style="margin:25px 0 10px; font-size:16px;">👥 Meus Amigos</h3>
+        <div id="lista-amigos">
+            <p style="color:#9ca3af; font-size:14px;">Nenhum amigo adicionado</p>
+        </div>
+    </div>
+</div>
+
+<!-- JOGAR -->
+<div id="tela-jogar" class="tela">
+    <div class="caixa">
+        <button class="voltar" onclick="ir('tela-principal')">← Voltar</button>
+        <h2>🎮 Jogar</h2>
+        
+        <h3 style="margin:20px 0 10px; font-size:16px;">👥 Seu Grupo (<span id="tamanho-grupo">1</span>/4 pessoas)</h3>
+        <div id="lista-grupo">
+            <div class="item">
+                <div class="item-nome" id="nome-jogador-eu">Você</div>
+                <div class="item-status status-online">🟢 Online</div>
+            </div>
+        </div>
+        <button class="btn-azul" style="margin:10px 0; width:100%;" onclick="ir('tela-amigos')">➕ Convidar amigo para o grupo</button>
+        
+        <h3 style="margin:25px 0 10px; font-size:16px;">🎮 Escolha o modo de jogo</h3>
+        <p id="aviso-modo" style="color:#fde047; font-size:13px; margin-bottom:10px;">Com 1 pessoa, só é possível jogar 1v1</p>
+        
+        <button class="btn-larj" style="margin-bottom:8px;" onclick="iniciarPartida('1v1')">⚡ 1v1</button>
+        <button class="btn-verde" style="margin-bottom:8px;" onclick="iniciarPartida('2v2')">👥 2v2</button>
+        <button class="btn-azul" style="margin-bottom:8px;" onclick="iniciarPartida('3v3')">🏆 3v3</button>
+        <button class="btn-azul" onclick="iniciarPartida('4v4')">🔥 4v4</button>
+    </div>
+</div>
+
+<!-- LOJA / PIX -->
+<div id="tela-loja" class="tela">
+    <div class="caixa">
+        <button class="voltar" onclick="ir('tela-principal')">← Voltar</button>
+        <h2>🛒 Comprar Créditos</h2>
+        
+        <div class="item" onclick="selecionarPacote(10, '100')">
+            <div class="item-nome">💎 100 Créditos — R$ 10,00</div>
+        </div>
+        <div class="item" onclick="selecionarPacote(25, '300')">
+            <div class="item-nome">💎 300 Créditos — R$ 25,00</div>
+        </div>
+        <div class="item" onclick="selecionarPacote(50, '700')">
+            <div class="item-nome">💎 700 Créditos — R$ 50,00</div>
+        </div>
+        
+        <div id="area-pix" class="oculto">
+            <h3 style="margin-top:20px;">💳 Pagamento via PIX</h3>
+            <p>Pacote: <span id="pacote-nome"></span></p>
+            <p style="font-size:18px; font-weight:bold; color:#facc15; margin:5px 0;">Valor: R$ <span id="pacote-valor"></span></p>
+            
+            <div class="aviso-pix">
+                ⚠️ <strong>IMPORTANTE:</strong><br>
+                • Salve o comprovante do pagamento<br>
+                • Pague exatamente o valor acima<br>
+                • Se pagar valor diferente, não receberá os créditos<br>
+                • O valor incorreto será devolvido automaticamente
+            </div>
+            
+            <p style="margin-top:15px; font-size:14px; color:#9ca3af;">Chave PIX:</p>
+            <div class="chave-pix">5ab39b7f-f345-4ca8-970e-963b40dfe753</div>
+            
+            <label style="margin-top:15px;">Valor que você pagou (apenas números):</label>
+            <input type="number" id="valor-pago" placeholder="Ex: 10" step="0.01">
+            
+            <button class="btn-verde" onclick="verificarPagamento()">✅ Enviar Comprovante</button>
+        </div>
+        
+        <div id="msg-pix" class="mensagem oculto"></div>
+    </div>
+</div>
+
+<script>
+let usuarioAtual = null;
+let creditos = 100;
+let tagRecebida = null;
+let tagEquipada = null;
+let amigos = [];
+let pedidosAmizade = [];
+let pacoteSelecionado = null;
+
+const codigosValidos = {
+    'AMIGO123': { nome: 'Amigo Especial' },
+    'DEV2026': { nome: 'Desenvolvedor' },
+    'JOGADOR': { nome: 'Jogador Experiente' }
+};
+
+function mostrarMensagem(id, texto, tipo) {
+    const el = document.getElementById(id);
+    el.textContent = texto;
+    el.className = 'mensagem ' + tipo;
+    el.classList.remove('oculto');
+    setTimeout(() => el.classList.add('oculto'), 4000);
+}
+
+function fazerLogin() {
+    const nome = document.getElementById('campo-nome').value.trim();
+    if (!nome) {
+        mostrarMensagem('msg-login', 'Digite seu nome primeiro!', 'erro');
+        return;
+    }
+    usuarioAtual = nome;
+    document.getElementById('exibe-nome').textContent = nome;
+    document.getElementById('nome-jogador-eu').textContent = nome;
+    ir('tela-principal');
+}
+
+function ir(idTela) {
+    document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+    document.getElementById(idTela).classList.add('ativa');
+}
+
+function sair() {
+    if (confirm('Tem certeza que deseja sair?')) {
+        usuarioAtual = null;
+        document.getElementById('campo-nome').value = '';
+        ir('tela-login');
+    }
+}
+
+function resgatarCodigo() {
+    const codigo = document.getElementById('codigo-input').value.trim().toUpperCase();
+    if (!codigo) {
+        mostrarMensagem('msg-codigo', 'Digite um código!', 'erro');
+        return;
+    }
+    if (codigosValidos[codigo]) {
+        tagRecebida = codigosValidos[codigo];
+        document.getElementById('nome-tag').textContent = tagRecebida.nome;
+        document.getElementById('modal-tag').classList.add('ativo');
+        document.getElementById('codigo-input').value = '';
+    } else {
+        mostrarMensagem('msg-codigo', 'Código inválido!', 'erro');
+    }
+}
+
+function equiparTag() {
+    tagEquipada = tagRecebida;
+    document.getElementById('exibe-tag-equipada').textContent = tagEquipada.nome;
+    document.getElementById('exibe-tag-equipada').classList.remove('oculto');
+    fecharModalTag();
+}
+
+function fecharModalTag() {
+    document.getElementById('modal-tag').classList.remove('ativo');
+    tagRecebida = null;
+}
+
+function buscarAmigo() {
+    const nome = document.getElementById('buscar-nome').value.trim();
+    if (!nome) return;
+    if (nome === usuarioAtual) {
+        alert('Você não pode adicionar a si mesmo!');
+        return;
+    }
+    amigos.push({ nome: nome, status: 'online' });
+    alert(`✅ Pedido enviado para ${nome}!`);
+    document.getElementById('buscar-nome').value = '';
+    atualizarListaAmigos();
+}
+
+function atualizarListaAmigos() {
+    const lista = document.getElementById('lista-amigos');
+    if (amigos.length === 0) {
+        lista.innerHTML = '<p style="color:#9ca3af; font-size:14px;">Nenhum amigo adicionado</p>';
+        return;
+    }
+    lista.innerHTML = amigos.map(a => `
+        <div class="item">
+            <div class="item-nome">${a.nome}</div>
+            <div class="item-status status-online">🟢 Online</div>
+            <button class="btn-azul" style="width:auto; padding:6px 12px; font-size:13px; margin-top:8px;" onclick="convidarParaJogar('${a.nome}')">🎮 Convidar para jogar</button>
+        </div>
+    `).join('');
+}
+
+function convidarParaJogar(nome) {
+    alert(`✅ Convite enviado para ${nome}! Quando ele aceitar, vocês estarão no mesmo grupo.`);
+}
+
+function iniciarPartida(modo) {
+    const qtdPessoas = 1;
+    if (modo === '1v1' && qtdPessoas > 1) {
+        alert('⚠️ 1v1 só é possível com 1 jogador! Com mais pessoas, escolha 2v2, 3v3 ou 4v4.');
+        return;
+    }
+    alert(`🎮 Iniciando partida ${modo}! Seu time tem ${qtdPessoas} jogador(es) + ${parseInt(modo[0]) - qtdPessoas} bot(s). Boa sorte!`);
+}
+
+function selecionarPacote(valor, creditosPacote) {
+    pacoteSelecionado = { valor: valor, creditos: creditosPacote };
+
+  
