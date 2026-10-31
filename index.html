@@ -1,80 +1,427 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RL 2D - Rocket League</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:linear-gradient(135deg,#1e3a8a,#166534);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center}
-.caixa-login{background:#1e293b;padding:40px 30px;border-radius:12px;border:2px solid #475569;text-align:center;max-width:400px;width:90%}
-h1{font-size:28px;margin-bottom:8px;color:#f97316}
-p{color:#94a3b8;margin-bottom:30px}
-input{width:100%;padding:14px;font-size:16px;border:2px solid #475569;border-radius:8px;background:#0f172a;color:#fff;margin-bottom:15px}
-input:focus{outline:none;border-color:#f97316}
-button{width:100%;padding:14px;font-size:16px;font-weight:bold;border:none;border-radius:8px;cursor:pointer;transition:.2s}
-button:hover{transform:scale(1.02)}
-.btn-entrar{background:#f97316;color:#fff}
-.btn-entrar:hover{background:#ea580c}
-.erro{color:#fca5a5;margin-bottom:10px;min-height:22px}
-.tela-principal{display:none;padding:30px;text-align:center;width:100vw;height:100vh;background:linear-gradient(135deg,#1e3a8a,#166534)}
-.tela-principal.ativa{display:block}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL 2D — Clone 2D · Visão Lateral · Expandido</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body {
+            background: linear-gradient(to bottom, #0f172a, #1e293b);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* Cabeçalho principal */
+        .cabecalho-principal {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+        }
+        .cabecalho-principal h1 {
+            font-size: 36px;
+            letter-spacing: 4px;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        .subtitulo {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .descricao {
+            color: #60a5fa;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        
+        /* Perfil do jogador */
+        .perfil {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .nome-perfil {
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .tag-dev {
+            background: linear-gradient(90deg, #a855f7, #ec4899);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .info-rank {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .info-numeros {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .info-item {
+            font-size: 14px;
+        }
+        .info-item strong {
+            color: #facc15;
+            font-size: 16px;
+        }
+        .xp-area {
+            margin-top: 12px;
+        }
+        .xp-texto {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+        .xp-fundo {
+            height: 8px;
+            background: #334155;
+            border-radius: 4px;
+        }
+        .xp-barra {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #facc15, #fde047);
+            border-radius: 4px;
+        }
+        
+        /* Navegação / Abas */
+        .navegacao {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 10px;
+        }
+        .aba {
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .aba.ativa {
+            background: #334155;
+            color: #ffffff;
+        }
+        .aba:hover {
+            background: #334155;
+            color: #ffffff;
+        }
+        
+        /* Conteúdo das abas */
+        .conteudo {
+            display: none;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .conteudo.ativa {
+            display: block;
+        }
+        .conteudo h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #f97316;
+        }
+        
+        /* Botões e Inputs */
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background: #0f172a;
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #f97316;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover {
+            transform: scale(1.02);
+        }
+        .btn-larj { background: #f97316; color: #fff; }
+        .btn-azul { background: #0ea5e9; color: #fff; }
+        .btn-verde { background: #22c55e; color: #fff; }
+        .btn-cinza { background: #475569; color: #fff; }
+        .btn-vermelho { background: #ef4444; color: #fff; }
+        .linha-botoes { display: flex; gap: 10px; margin-top: 15px; }
+        .linha-botoes button { flex: 1; }
+        
+        /* Tag brilhante azul */
+        .tag-recebida {
+            background: linear-gradient(90deg, #0ea5e9, #7dd3fc);
+            color: #0c4a6e;
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            display: inline-block;
+            margin: 15px 0;
+            box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
+        }
+        
+        /* Itens */
+        .item {
+            background: #27303f;
+            border: 1px solid #3f4b5c;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+        .item-nome { font-weight: bold; font-size: 15px; }
+        .item-status { font-size: 12px; margin-top: 5px; }
+        .online { color: #4ade80; }
+        .offline { color: #6b7280; }
+        .jogando { color: #facc15; }
+        
+        /* Modal */
+        .fundo-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none;
+            align-items: center; justify-content: center; z-index: 999;
+        }
+        .fundo-modal.ativo { display: flex; }
+        .modal {
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        /* PIX */
+        .chave-pix {
+            font-family: monospace;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 6px;
+            word-break: break-all;
+            font-size: 12px;
+            margin: 10px 0;
+            border: 1px solid #374151;
+        }
+        .aviso-pix {
+            font-size: 13px;
+            color: #fde047;
+            background: rgba(234,179,8,0.1);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+        
+        /* Modos de jogo */
+        .grid-modos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
+        .grid-tipos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .grid-tipos button { font-size: 12px; padding: 10px 6px; }
+        .modo-selecionado { border: 2px solid #facc15 !important; }
+        
+        .oculto { display: none !important; }
+        .mensagem { padding: 12px; border-radius: 6px; margin: 10px 0; font-size: 14px; }
+        .sucesso { background: rgba(34,197,94,0.1); color: #86efac; border: 1px solid #22c55e; }
+        .erro { background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid #ef4444; }
+        .info { background: rgba(14,165,233,0.1); color: #7dd3fc; border: 1px solid #0ea5e9; }
+        
+        /* Controles de som/música */
+        .controles-topo {
+            text-align: right;
+            margin-bottom: 15px;
+        }
+        .controles-topo button {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94a3b8;
+            padding: 5px 10px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+    </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
-<div id="tela-login" class="caixa-login">
-<h1>🚀 ROCKET LEAGUE 2D</h1>
-<p>Clone 2D · Visão Lateral</p>
-<input type="text" id="meu-nome" placeholder="Digite seu nome...">
-<div id="mensagem-erro" class="erro"></div>
-<button id="botao-entrar" class="btn-entrar">ENTRAR</button>
+<!-- Cabeçalho Principal -->
+<div class="cabecalho-principal">
+    <h1>ROCKET LEAGUE</h1>
+    <p class="subtitulo">CLONE 2D · VISÃO LATERAL · EXPANDIDO</p>
+    <p class="descricao">Física real · Boost · Flip · Múltiplos modos · Rocket Pass · Competitivo</p>
 </div>
 
-<!-- TELA DEPOIS DE ENTRAR -->
-<div id="tela-interna" class="tela-principal">
-<h2>Bem-vindo, <span id="mostra-nome"></span>! 🎉</h2>
-<p style="margin-top:20px;color:#fff">Você entrou com sucesso!</p>
-<button style="max-width:200px;margin-top:30px;background:#ef4444" onclick="sair()">SAIR</button>
+<!-- Perfil do Jogador -->
+<div class="perfil">
+    <div class="nome-perfil">
+        <span id="nome-jogador">progg_1v4</span>
+        <span class="tag-dev">DEV</span>
+    </div>
+    <div class="info-rank">Bronze Divisão 3 • 150 MMR</div>
+    
+    <div class="info-numeros">
+        <div class="info-item"><strong id="creditos">0</strong> Créditos</div>
+        <div class="info-item"><strong id="sp">0</strong> SP</div>
+        <div class="info-item">Nível <strong id="nivel">1</strong></div>
+    </div>
+    
+    <div class="xp-area">
+        <div class="xp-texto">XP: 0 / 12000%</div>
+        <div class="xp-fundo">
+            <div class="xp-barra"></div>
+        </div>
+    </div>
 </div>
 
-<script>
-// PEGA OS ELEMENTOS
-const botaoEntrar = document.getElementById('botao-entrar');
-const campoNome = document.getElementById('meu-nome');
-const mensagemErro = document.getElementById('mensagem-erro');
-const telaLogin = document.getElementById('tela-login');
-const telaInterna = document.getElementById('tela-interna');
-const mostraNome = document.getElementById('mostra-nome');
+<!-- Controles Música e Som -->
+<div class="controles-topo">
+    <button id="botao-musica">🔇 MÚSICA: ON</button>
+    <button id="botao-som">🔊 SOM: ON</button>
+</div>
 
-// FUNÇÃO DE ENTRAR
-botaoEntrar.addEventListener('click', function() {
-    const nome = campoNome.value.trim();
+<!-- Navegação por Abas -->
+<div class="navegacao">
+    <button class="aba ativa" onclick="mostrarAba('garagem')">GARAGEM / INVENTÁRIO</button>
+    <button class="aba" onclick="mostrarAba('perfil')">PERFIL</button>
+    <button class="aba" onclick="mostrarAba('rocketpass')">ROCKET PASS</button>
+    <button class="aba" onclick="mostrarAba('loja')">LOJA</button>
+    <button class="aba" onclick="mostrarAba('creditos')">CRÉDITOS / PIX</button>
+    <button class="aba" onclick="mostrarAba('desafios')">DESAFIOS</button>
+    <button class="aba" onclick="mostrarAba('album')">ÁLBUM COLEÇÕES</button>
+    <button class="aba" onclick="mostrarAba('torneios')">TORNEIOS</button>
+    <button class="aba" onclick="mostrarAba('comojogar')">COMO JOGAR</button>
+    <button class="aba" onclick="mostrarAba('resgatar')">RESGATAR CÓDIGO</button>
+    <button class="aba" onclick="mostrarAba('amigos')">AMIGOS</button>
+    <button class="aba" onclick="mostrarAba('grupo')">GRUPO</button>
+</div>
+
+<!-- ABA: GARAGEM -->
+<div id="aba-garagem" class="conteudo ativa">
+    <h2>🚗 Garagem / Inventário</h2>
+    <p style="color:#94a3b8;">Escolha seu carro, cores, roupas e itens!</p>
+    <div class="item" style="margin-top:15px;">
+        <div class="item-nome">Octane</div>
+        <div style="color:#94a3b8; font-size:13px;">Carro padrão • Equipado</div>
+    </div>
+    <p style="color:#94a3b8; font-size:13px; margin-top:15px;">🚧 Mais itens em breve!</p>
+</div>
+
+<!-- ABA: PERFIL -->
+<div id="aba-perfil" class="conteudo">
+    <h2>👤 Seu Perfil</h2>
+    <p><strong>Nome:</strong> progg_1v4 <span class="tag-dev" style="font-size:11px;">DEV</span></p>
+    <p><strong>Rank:</strong> Bronze Divisão 3</p>
+    <p><strong>MMR:</strong> 150</p>
+    <p><strong>Nível:</strong> 1</p>
+    <p><strong>Vitórias:</strong> 0</p>
+    <p><strong>Partidas jogadas:</strong> 0</p>
+</div>
+
+<!-- ABA: ROCKET PASS -->
+<div id="aba-rocketpass" class="conteudo">
+    <h2>🚀 Rocket Pass</h2>
+    <p style="color:#94a3b8;">Progresso da temporada</p>
+    <div style="background:#334155; padding:15px; border-radius:6px; margin-top:15px;">
+        <p>Nível atual: <strong>1</strong></p>
+        <p style="font-size:13px; color:#94a3b8;">XP: 0 / 12.000 para o próximo nível</p>
+    </div>
+    <p style="color:#94a3b8; font-size:13px; margin-top:15px;">Complete desafios para ganhar XP e recompensas!</p>
+</div>
+
+<!-- ABA: LOJA -->
+<div id="aba-loja" class="conteudo">
+    <h2>🛒 Loja</h2>
+    <p style="color:#94a3b8;">Itens em destaque hoje:</p>
+    <div class="item">
+        <div class="item-nome">🎃 Bola Assombrada — 200 Créditos</div>
+    </div>
+    <div class="item">
+        <div class="item-nome">👻 Fantasma — 150 Créditos</div>
+    </div>
+    <div class="item">
+        <div class="item-nome">💀 Caveira — 180 Créditos</div>
+    </div>
+    <p style="color:#94a3b8; font-size:13px; margin-top:15px;">Mais itens chegando em breve!</p>
+</div>
+
+<!-- ABA: CRÉDITOS / PIX -->
+<div id="aba-creditos" class="conteudo">
+    <h2>💳 Comprar Créditos — PIX</h2>
     
-    if (nome === '') {
-        mensagemErro.textContent = '⚠️ Por favor, digite seu nome!';
-        return;
-    }
+    <div class="item" onclick="selecionarPacote(10, '100')">
+        <div class="item-nome">💎 100 Créditos — R$ 10,00</div>
+    </div>
+    <div class="item" onclick="selecionarPacote(25, '300')">
+        <div class="item-nome">💎 300 Créditos — R$ 25,00</div>
+    </div>
+    <div class="item" onclick="selecionarPacote(50, '700')">
+        <div class="item-nome">💎 700 Créditos — R$ 50,00</div>
+    </div>
     
-    // ENTRA!
-    mostraNome.textContent = nome;
-    telaLogin.style.display = 'none';
-    telaInterna.classList.add('ativa');
-});
+    <div id="area-pix" class="oculto" style="margin-top:20px;">
+        <h3 style="font-size:16px;">Pagamento via PIX</h3>
+        <p>Pacote: <span id="nome-pacote"></span></p>
+        <p style="font-size:18px; font-weight:bold; color:#facc15; margin:5px 0;">Valor: R$ <span id="valor-pacote"></span></p>
+        
+        <div class="aviso-pix">
+            ⚠️ <strong>IMPORTANTE:</strong><br>
+            • Salve o comprovante do pagamento<br>
+            • Pague exatamente o valor acima<br>
+            • Se pagar valor diferente, não receberá os créditos<br>
+            • O valor incorreto será devolvido automaticamente
+        </div>
+        
+        <p style="margin-top:15px; font-size:14px; color:#94a3b8;">Chave PIX:</p>
+        <div class="chave-pix">5ab39b7f-f345-4ca8-970e-963b40dfe753</div>
+        
+        <label style="margin-top:15px;">Valor que você pagou (apenas números):</label>
+        <input type="number" id="valor-pago" placeholder="Ex: 10" step="0.01">
+        
+        <button class="btn-verde" onclick="verificarPagamento()">✅ Enviar Comprovante</button>
+    </div>
+    
+    <div id="msg-pix" class="mensagem oculto"></div>
+</div>
 
-// TAMBÉM FUNCIONA APERTANDO ENTER
-campoNome.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') botaoEntrar.click();
-});
-
-function sair() {
-    telaInterna.classList.remove('ativa');
-    telaLogin.style.display = 'block';
-    campoNome.value = '';
-    mensagemErro.textContent = '';
-}
-</script>
-
-</body>
-</html>
+<!-- ABA: DESAFIOS -->
+<div id="aba-desafios" class="conteudo">
+    <h2>🏆 Desafios</h2>
+    <p style="color:#94a3b8;">Complete missões para ganhar recompensas!</p>
+    <div class="item">
+        <div class="item-nome">⚽ Jogue 1 partida</div>
+        <div style="font-size:13px; color:#94a3b8;">Recompensa: 50 XP</div>
+    </div>
+    <div class="item">
+        <div class="item-nome">🏆 Vença 1 partida</div>
+        <div style="font-size:13px; color:#94a3b8;">Recompensa: 100 XP + 20 Créditos</div>
+    </div>
+    <div class="item">
+        <div class="item-nome">👥 Jogue com um amigo</div>
+        <div style="font-size:13px; color:#94a3b8;">Recompensa
