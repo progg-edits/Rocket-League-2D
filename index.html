@@ -3,177 +3,416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚔️ Arena de Partidas — Pronto para Jogar</title>
+    <title>Rocket League — Completo</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); min-height: 100vh; color: #fff; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; }
-        h1 { text-align: center; font-size: 2rem; margin-bottom: 30px; color: #ffd700; text-shadow: 0 0 15px #ffd70060; }
-        .card { background: #ffffff12; border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px); border: 1px solid #ffffff20; }
-        .card h2 { font-size: 1.2rem; margin-bottom: 15px; color: #00d4ff; }
-        
-        /* Perfil */
-        .perfil-top { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-        .foto-perfil { width: 90px; height: 90px; border-radius: 50%; background: #333; overflow: hidden; border: 3px solid #ffd700; }
-        .foto-perfil img { width: 100%; height: 100%; object-fit: cover; }
-        .info-perfil p { margin: 6px 0; font-size: 0.95rem; }
-        input, select, button { padding: 10px 14px; border-radius: 8px; border: none; font-size: 0.95rem; margin: 4px; }
-        button { background: linear-gradient(90deg, #00d4ff, #0099cc); color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { transform: scale(1.03); }
-        .btn-green { background: linear-gradient(90deg, #28c76f, #1ea058); }
-        .btn-orange { background: linear-gradient(90deg, #ff9500, #cc7700); }
-        
-        /* Detector de Calor */
-        .calor-bar { height: 24px; background: #222; border-radius: 12px; overflow: hidden; margin-top: 10px; }
-        .calor-nivel { height: 100%; width: 0%; background: linear-gradient(90deg, #28c76f, #ffd700, #ff3b30); transition: width 0.5s ease; text-align: center; line-height: 24px; font-size: 0.75rem; font-weight: bold; color: #000; }
-        
-        /* Torneios */
-        .torneio-item { padding: 10px; background: #ffffff08; border-radius: 8px; margin: 6px 0; border-left: 3px solid #ffd700; }
-        
-        /* Amigos */
-        .amigo-item { padding: 8px; border-radius: 6px; background: #ffffff08; margin: 4px 0; display: flex; justify-content: space-between; align-items: center; }
-        .status-online { color: #28c76f; font-size: 0.85rem; }
-        
-        .linha { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 8px; }
-        .codigo-sala { font-size: 1.4rem; font-weight: bold; color: #ffd700; letter-spacing: 3px; background: #00000040; padding: 8px 16px; border-radius: 8px; }
-        .sem-bugs { text-align: center; margin-top: 20px; color: #28c76f; font-weight: bold; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        body {
+            background: linear-gradient(180deg, #1a1a2c 0%, #12121f 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* === CABEÇALHO PRINCIPAL === */
+        .header {
+            background: linear-gradient(90deg, #0a0a12, #151528);
+            padding: 15px 30px;
+            border-bottom: 3px solid #00c8ff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 15px #00c8ff;
+        }
+        .player-info {
+            text-align: right;
+        }
+        .player-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #f5c518;
+        }
+        .player-rank {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* === BARRA DE BOOST — ESTILO ORIGINAL === */
+        .boost-bar-container {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 26px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #fff;
+            border-radius: 2px;
+            overflow: hidden;
+            z-index: 100;
+        }
+        .boost-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #00bfff, #0099cc);
+            transition: width 0.1s ease-out;
+        }
+        .boost-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 2px #000;
+            pointer-events: none;
+        }
+        .boost-pips {
+            position: fixed;
+            bottom: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+        }
+        .pip {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid #fff;
+            background: #333;
+        }
+        .pip.active {
+            background: #00bfff;
+            box-shadow: 0 0 6px #00bfff;
+        }
+
+        /* === CONTROLES DA PARTIDA — CANTO SUPERIOR === */
+        .hud-top {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 50;
+        }
+        .team-panel {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 15px;
+            border-radius: 4px;
+            border-left: 3px solid;
+        }
+        .blue-team { border-color: #00c8ff; }
+        .orange-team { border-color: #ff9500; }
+        .team-name { font-size: 12px; color: #aaa; }
+        .team-score { font-size: 24px; font-weight: bold; }
+        .match-time {
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px #000;
+        }
+        .match-state {
+            font-size: 12px;
+            color: #f5c518;
+            text-align: center;
+        }
+
+        /* === CONTEÚDO PRINCIPAL === */
+        .main-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px 80px;
+        }
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: #2a2a44;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            background: #353554;
+            color: #fff;
+        }
+        .tab.active {
+            background: #00c8ff;
+            color: #000;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .panel {
+            background: #1e1e30;
+            border: 2px solid #333355;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        .panel-title {
+            font-size: 16px;
+            color: #00c8ff;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333355;
+        }
+        .btn {
+            background: linear-gradient(to bottom, #3a7bd5, #2a5ea8);
+            border: none;
+            color: white;
+            padding: 10px 22px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 2px;
+            margin: 4px;
+            transition: all 0.15s;
+        }
+        .btn:hover {
+            transform: scale(1.02);
+        }
+        .btn-orange {
+            background: linear-gradient(to bottom, #f7941e, #d67e14);
+        }
+        .btn-green {
+            background: linear-gradient(to bottom, #34c759, #28a745);
+        }
+        .btn-red {
+            background: linear-gradient(to bottom, #e74c3c, #c0392b);
+        }
+        .btn-gray {
+            background: #444466;
+        }
+        input, select {
+            background: #252540;
+            border: 1px solid #444477;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 2px;
+            font-size: 14px;
+            margin: 4px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+        }
+        .card {
+            background: #252540;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #333355;
+            text-align: center;
+        }
+        .card h3 {
+            font-size: 14px;
+            color: #f5c518;
+            margin-bottom: 8px;
+        }
+        .card p {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .item-list {
+            list-style: none;
+        }
+        .item-list li {
+            padding: 8px 10px;
+            background: #252540;
+            margin: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid #00c8ff;
+        }
+        .rank-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #f5c518;
+            color: #000;
+            font-weight: bold;
+            font-size: 11px;
+            border-radius: 2px;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00c8ff, #00ff88);
+        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🎮 Arena de Partidas</h1>
-
-    <!-- 👤 PERFIL -->
-    <div class="card">
-        <h2>👤 Seu Perfil</h2>
-        <div class="perfil-top">
-            <div class="foto-perfil" id="fotoPerfil">
-                <span style="font-size:2.5rem; display:flex; align-items:center; justify-content:center; height:100%;">👤</span>
-            </div>
-            <div class="info-perfil">
-                <p><strong>Nome de Usuário:</strong> <input type="text" id="nomeUsuario" placeholder="Digite seu nome aqui"></p>
-                <p><strong>Nível:</strong> 1 | <strong>Carro:</strong> Octane (Padrão)</p>
-                <p><button onclick="alert('Escolha uma imagem da sua galeria! 🖼️')">📷 Alterar Foto de Perfil</button></p>
-            </div>
-        </div>
+<!-- 🔝 CABEÇALHO -->
+<div class="header">
+    <div class="logo">🚀 ROCKET LEAGUE</div>
+    <div class="player-info">
+        <div class="player-name" id="displayName">Jogador123</div>
+        <div class="player-rank">Platina III • Nível 147</div>
     </div>
-
-    <!-- 👥 AMIGOS -->
-    <div class="card">
-        <h2>👥 Lista de Amigos</h2>
-        <p><input type="text" id="nomeAmigo" placeholder="Nome do amigo"> <button onclick="adicionarAmigo()">➕ Adicionar Amigo</button></p>
-        <div id="listaAmigos" style="margin-top:12px;">
-            <p style="color:#aaa; font-style:italic;">Nenhum amigo adicionado ainda.</p>
-        </div>
-    </div>
-
-    <!-- 🌡️ DETECTOR DE CALOR -->
-    <div class="card">
-        <h2>🌡️ Detector de Calor <span style="font-size:0.8rem; color:#aaa;">(Casual • Competitivo • Privado • Torneios)</span></h2>
-        <p id="calorTexto">Calor da partida: <strong>Calmo</strong></p>
-        <div class="calor-bar"><div class="calor-nivel" id="calorBar">0%</div></div>
-        <p style="margin-top:8px;">
-            <button onclick="simularCalor(20)">😌 Calmo</button>
-            <button onclick="simularCalor(50)">🔥 Médio</button>
-            <button onclick="simularCalor(85)">🔥🔥 Intenso</button>
-            <button onclick="simularCalor(100)">💥 Pegando Fogo!</button>
-        </p>
-    </div>
-
-    <!-- 🔒 PARTIDA PRIVADA -->
-    <div class="card">
-        <h2>🔒 Partida Privada</h2>
-        <p><strong>Escolha o modo:</strong></p>
-        <div class="linha">
-            <button onclick="selecionarModo('1v1')">1v1</button>
-            <button onclick="selecionarModo('2v2')">2v2</button>
-            <button onclick="selecionarModo('3v3')">3v3</button>
-        </div>
-        <p style="margin-top:12px;"><strong>Dificuldade dos Bots:</strong> 
-            <select id="dificuldadeBot">
-                <option value="facil">🟢 Iniciante</option>
-                <option value="medio" selected>🟡 Intermediário</option>
-                <option value="dificil">🔴 Especialista</option>
-            </select>
-        </p>
-        <p style="margin-top:15px;">
-            <button class="btn-green" onclick="criarSala()">🔓 Criar Sala Privada</button>
-        </p>
-        <p id="codigoSala" style="margin-top:10px; display:none;">Código da Sala: <span class="codigo-sala" id="codigoGerado">-</span></p>
-        <p style="margin-top:8px;">Entrar com código: <input type="text" id="codigoEntrada" placeholder="Digite o código"> <button class="btn-orange" onclick="entrarSala()">Entrar</button></p>
-    </div>
-
-    <!-- 🏆 TORNEIOS -->
-    <div class="card">
-        <h2>🏆 Torneios — Sempre tem um começando!</h2>
-        <p style="margin-bottom:10px;">⚡ A cada 1 minuto | 🕐 A cada 1 hora | 📅 Qualquer horário disponível</p>
-        <div id="listaTorneios">
-            <div class="torneio-item">🕐 20:50 — Torneio Hora • <strong>Disponível</strong> ✅</div>
-            <div class="torneio-item">🕐 21:50 — Torneio Hora • <strong>Disponível</strong> ✅</div>
-            <div class="torneio-item">🕐 22:00 — Torneio Especial • <strong>Disponível</strong> ✅</div>
-            <div class="torneio-item">⚡ A qualquer minuto — Torneio Rápido • <strong>Disponível Agora</strong> ✅</div>
-        </div>
-        <button style="margin-top:10px;" onclick="alert('Entrou no torneio! Boa sorte! 🏆')">🏅 Entrar no Torneio Agora</button>
-    </div>
-
-    <p class="sem-bugs">✅ Sistema funcionando • Zero Bugs • Pronto para jogar!</p>
 </div>
 
-<script>
-let amigos = [];
-let modoSelecionado = '3v3';
+<!-- 📊 HUD DA PARTIDA (visível durante jogo) -->
+<div class="hud-top hidden" id="matchHUD">
+    <div class="team-panel blue-team">
+        <div class="team-name">AZUL</div>
+        <div class="team-score" id="blueScore">0</div>
+    </div>
+    <div>
+        <div class="match-time" id="matchTime">05:00</div>
+        <div class="match-state" id="matchState">JOGO EM ANDAMENTO</div>
+    </div>
+    <div class="team-panel orange-team">
+        <div class="team-name">LARANJA</div>
+        <div class="team-score" id="orangeScore">0</div>
+    </div>
+</div>
 
-function selecionarModo(modo) {
-    modoSelecionado = modo;
-    alert('Modo selecionado: ' + modo + ' ✅');
-}
+<!-- ⛽ BARRA DE BOOST + PIPS -->
+<div class="boost-pips" id="boostPips">
+    <div class="pip active"></div><div class="pip active"></div><div class="pip active"></div>
+    <div class="pip active"></div><div class="pip active"></div><div class="pip active"></div>
+    <div class="pip active"></div><div class="pip active"></div>
+    <div class="pip active"></div><div class="pip active"></div>
+</div>
+<div class="boost-bar-container">
+    <div class="boost-bar" id="boostBar"></div>
+    <div class="boost-text" id="boostText">100%</div>
+</div>
 
-function adicionarAmigo() {
-    const nome = document.getElementById('nomeAmigo').value.trim();
-    if (nome && !amigos.includes(nome)) {
-        amigos.push(nome);
-        atualizarListaAmigos();
-        document.getElementById('nomeAmigo').value = '';
-    }
-}
+<!-- 📋 CONTEÚDO PRINCIPAL -->
+<div class="main-container">
+    <!-- 🧭 ABAS DE NAVEGAÇÃO -->
+    <div class="nav-tabs">
+        <button class="tab active" onclick="openTab('play')">▶️ Jogar</button>
+        <button class="tab" onclick="openTab('casual')">🎮 Casual</button>
+        <button class="tab" onclick="openTab('competitive')">🏆 Competitivo</button>
+        <button class="tab" onclick="openTab('tournament')">🏅 Torneios</button>
+        <button class="tab" onclick="openTab('private')">🔒 Partida Privada</button>
+        <button class="tab" onclick="openTab('training')">📚 Treinamento</button>
+        <button class="tab" onclick="openTab('garage')">🚪 Garagem</button>
+        <button class="tab" onclick="openTab('friends')">👥 Amigos</button>
+    </div>
 
-function atualizarListaAmigos() {
-    const el = document.getElementById('listaAmigos');
-    if (amigos.length === 0) {
-        el.innerHTML = '<p style="color:#aaa; font-style:italic;">Nenhum amigo adicionado ainda.</p>';
-        return;
-    }
-    el.innerHTML = amigos.map(nome => 
-        `<div class="amigo-item"><span>👤 ${nome}</span><span class="status-online">● Online</span></div>`
-    ).join('');
-}
+    <!-- ⚽ ABA: JOGAR -->
+    <div id="play" class="tab-content active">
+        <div class="panel">
+            <div class="panel-title">JOGO RÁPIDO</div>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>Partida Casual</h3>
+                    <p>Sem classificação, só diversão</p>
+                    <button class="btn" onclick="iniciarBusca('Casual')">Jogar Agora</button>
+                </div>
+                <div class="card">
+                    <h3>Partida Ranqueada</h3>
+                    <p>Suba de divisão e conquiste seu ranking</p>
+                    <button class="btn btn-orange" onclick="iniciarBusca('Competitivo')">Jogar Agora</button>
+                </div>
+                <div class="card">
+                    <h3>Modos Extras</h3>
+                    <p>Hoops, Dropshot, Rumble, Snow Day</p>
+                    <button class="btn btn-green" onclick="openTab('casual')">Ver Modos</button>
+                </div>
+            </div>
+        </div>
 
-function simularCalor(nivel) {
-    const bar = document.getElementById('calorBar');
-    const texto = document.getElementById('calorTexto');
-    bar.style.width = nivel + '%';
-    bar.innerText = nivel + '%';
-    
-    if (nivel <= 30) texto.innerHTML = 'Calor da partida: <strong style="color:#28c76f;">Calmo 😌</strong>';
-    else if (nivel <= 60) texto.innerHTML = 'Calor da partida: <strong style="color:#ffd700;">Médio 🔥</strong>';
-    else if (nivel <= 85) texto.innerHTML = 'Calor da partida: <strong style="color:#ff9500;">Intenso 🔥🔥</strong>';
-    else texto.innerHTML = 'Calor da partida: <strong style="color:#ff3b30;">PEGA FOGO! 💥</strong>';
-}
+        <div class="panel">
+            <div class="panel-title">ESTATÍSTICAS GERAIS</div>
+            <div class="grid-2">
+                <div>
+                    <p><strong>Partidas Jogadas:</strong> 2.847</p>
+                    <p><strong>Vitórias:</strong> 1.523 (53.5%)</p>
+                    <p><strong>Gols:</strong> 8.921</p>
+                    <p><strong>Assistências:</strong> 3.456</p>
+                    <p><strong>Defesas:</strong> 4.102</p>
+                </div>
+                <div>
+                    <p><strong>Nível de Habilidade:</strong> 987</p>
+                    <p><strong>Média de Pontos:</strong> 342</p>
+                    <p><strong>Taxa de Vitória:</strong> 53.5%</p>
+                    <p><strong>Melhor Sequência:</strong> 12 vitórias</p>
+                    <p><strong>Tempo de Jogo:</strong> 482h</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-function criarSala() {
-    const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
-    document.getElementById('codigoGerado').innerText = codigo;
-    document.getElementById('codigoSala').style.display = 'block';
-    alert('Sala criada! Compartilhe o código: ' + codigo + ' ✅');
-}
+    <!-- 🎮 ABA: MODOS CASUAIS -->
+    <div id="casual" class="tab-content">
+        <div class="panel">
+            <div class="panel-title">MODOS DE JOGO CASUAIS</div>
+            <div class="grid-3">
+                <div class="card"><h3>⚽ Padrão</h3><p>3v3 — O clássico</p><button class="btn" onclick="iniciarBusca('Casual 3v3')">Entrar</button></div>
+                <div class="card"><h3>⚽ 2v2</h3><p>Duplas — Trabalho em equipe</p><button class="btn" onclick="iniciarBusca('Casual 2v2')">Entrar</button></div>
+                <div class="card"><h3>⚽ 1v1</h3><p>Duelo individual — só você e o adversário</p><button class="btn" onclick="iniciarBusca('Casual 1v1')">Entrar</button></div>
+                <div class="card"><h3>🏀 Hoops</h3><p>Basquete com carros</p><button class="btn" onclick="iniciarBusca('Hoops')">Entrar</button></div>
+                <div class="card"><h3>🎯 Dropshot</h3><p>Destrua o chão e marque gol</p><button class="btn" onclick="iniciarBusca('Dropshot')">Entrar</button></div>
+                <div class="card"><h3>⚡ Rumble</h3><p>Poderes aleatórios — caos total</p><button class="btn" onclick="iniciarBusca('Rumble')">Entrar</button></div>
+                <div class="card"><h3>❄️ Snow Day</h3><p>Hóquei no gelo — bola é um disco</p><button class="btn" onclick="iniciarBusca('Snow Day')">Entrar</button></div>
+                <div class="card"><h3>🎮 Mutadores</h3><p>Regras personalizadas — velocidade, tamanho, gravidade</p><button class="btn" onclick="alert('Modo Mutadores: personalize as regras! ✅')">Personalizar</button></div>
+            </div>
+        </div>
+    </div>
 
-function entrarSala() {
-    const cod = document.getElementById('codigoEntrada').value.trim();
-    if (cod.length >= 4) alert('Entrando na sala ' + cod + '... ✅');
-    else alert('Digite um código válido!');
-}
-</script>
-
-</body>
-</html>
+    <!-- 🏆 ABA: COMPETITIVO -->
+    <div id="competitive" class="tab-content">
+        <div class="panel">
+            <div class="panel-title">COMPETITIVO — Temporada Atual</div>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>1v1 Ranqueado</h3>
+                    <span class="rank-badge">Platina III</span>
+                    <p>Partidas: 142 | Pts: 867</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width:67%"></div></div>
+                    <p style="font-size:10px; color:#888; margin-top:4px;">Faltam 43 pontos para Diamante</p>
+                    <button class="btn btn-orange" onclick="iniciarBusca('Competitivo 1v1')">Jogar</button>
+                </div>
+                <div class="card">
+                    <h3>2v2 Ranqueado</h3>
+                    <span class="rank-badge">Platina II</span>
+                    <p>Partidas: 256 | Pts: 742</p>
+                    <div class="progress-bar"><div class="progress-fill" style="width:42%"></div></div>
+                    <p style="font-size:10px; color:#888; margin-top:4px;">Faltam 98 pontos para Platina III</p>
+                    <button class="btn btn-orange" onclick="iniciarBusca('Competitivo 2v2')">Jogar</button>
+                </div>
+                <div class="card">
+                    <h3>3v3 Ranqueado</h3>
+                    <span class="rank-badge">Ouro I</span>
+                    <p>Partidas: 189 | Pts: 521</p>
+                    <div class="progress-bar"><
